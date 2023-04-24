@@ -1,5 +1,8 @@
 import torch
 
+"""
+Generic autoencoder which can be initialized with any encoder or decoder 
+"""
 class AutoEncoder(torch.nn.Module):
     """
     Initialize an AutoEncoder with encoder layers defined by
