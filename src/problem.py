@@ -52,11 +52,11 @@ class ProblemBase(ABC):
     def train(self, data, epochs):
         losses = []
         for epoch in range(epochs):
-            for samp in data:
-                print(samp)
-            
+            for samp in data:       
                 # Output of Autoencoder
                 reconstructed = self.forward(samp)
+                print(max(reconstructed))
+                print(min(reconstructed))
                 
                 # Calculate loss
                 loss = self.loss(reconstructed, samp)
