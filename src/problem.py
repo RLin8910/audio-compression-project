@@ -1,4 +1,7 @@
 from abc import ABC, abstractmethod
+import os
+import utils
+import torch
 
 """
 Parent class of all trainable autoencoder problems.
@@ -11,6 +14,30 @@ class ProblemBase(ABC):
 
         self.inp_size = inp_size
         self.enc_size = enc_size
+
+    """
+    Saves the model to the folder at path `path`.
+    """
+    def save_model(self, path):
+        path = utils.path_slash(path)
+
+        if not os.path.exists(path):
+            os.makedirs(path)
+        
+        torch.save(self.autoencoder.encoder.state_dict(), path + 'encoder.pth')
+        torch.save(self.autoencoder.decoder.state_dict(), path + 'decoder.pth')
+
+    """
+    Loads the model with the root folder at path `path`.
+    """
+    def load_model(self, path):
+        path = utils.path_slash(path)
+
+        self.autoencoder.encoder.load_state_dict(torch.load(path + 'encoder.pth'))
+        self.autoencoder.decoder.load_state_dict(torch.load(path + 'decoder.pth'))
+
+        self.autoencoder.encoder.eval()
+        self.autoencoder.decoder.eval()
 
     """
     Train this model on the given data.

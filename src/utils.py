@@ -14,3 +14,12 @@ def split_and_pad(x, n):
     padded[:len(chunks[-1])] = chunks[-1]
     chunks[-1] = padded
     return chunks
+
+"""
+Makes sure the last character of a path is a slash so that items inside the folder 
+can be accessed.
+"""
+def path_slash(path):
+    if path[-1] != '/' or path[-1] != '\\':
+        path += '/'
+    return path
