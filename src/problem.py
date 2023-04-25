@@ -26,6 +26,7 @@ class ProblemBase(ABC):
         losses = []
         for epoch in range(epochs):
             for samp in data:
+                print(samp)
             
                 # Output of Autoencoder
                 reconstructed = self.forward(samp)

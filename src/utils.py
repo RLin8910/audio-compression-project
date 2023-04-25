@@ -1,5 +1,7 @@
+import torch
+
 """
-Split a list x into lists of length n, with zero padding to fill size as needed.
+Split a torch tensor x into tensors of length n, with zero padding to fill size as needed.
 """
 def split_and_pad(x, n):
     chunks = []
@@ -8,5 +10,7 @@ def split_and_pad(x, n):
         chunks.append(x[i:i+n])
     
     # pad last element
-    chunks[-1] += (n - len(chunks[-1]))
+    padded = torch.zeros((n,))
+    padded[:len(chunks[-1])] = chunks[-1]
+    chunks[-1] = padded
     return chunks
