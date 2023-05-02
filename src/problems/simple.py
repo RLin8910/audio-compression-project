@@ -49,15 +49,3 @@ class SimpleProblem(problem.ProblemBase):
             res = torch.cat((res, self.unpack(self.autoencoder.decoder(chunk))))
         
         return res
-
-    """
-    Normalizes an audio input into the [-1, 1] range.
-    """
-    def normalize(self, x):
-        return x / 32768
-
-    """
-    Unpack an audio input into the standard [-32767, 32767] range again.
-    """
-    def unpack(self, x):
-        return x * 32768

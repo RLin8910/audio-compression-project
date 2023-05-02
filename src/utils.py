@@ -10,10 +10,16 @@ def split_and_pad(x, n):
         chunks.append(x[i:i+n])
     
     # pad last element
-    padded = torch.zeros((n,))
-    padded[:len(chunks[-1])] = chunks[-1]
-    chunks[-1] = padded
+    chunks[-1] = pad(chunks[-1], n)
     return chunks
+
+"""
+Pad a tensor `x` to be of length n
+"""
+def pad(x, n):
+    padded = torch.zeros((n,))
+    padded[:len(x)] = x
+    return padded
 
 """
 Makes sure the last character of a path is a slash so that items inside the folder 

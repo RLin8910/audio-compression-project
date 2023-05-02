@@ -55,8 +55,6 @@ class ProblemBase(ABC):
             for samp in data:       
                 # Output of Autoencoder
                 reconstructed = self.forward(samp)
-                print(max(reconstructed))
-                print(min(reconstructed))
                 
                 # Calculate loss
                 loss = self.loss(reconstructed, samp)
@@ -70,6 +68,18 @@ class ProblemBase(ABC):
                 losses.append(loss)
         
         return losses
+
+    """
+    Normalizes an audio input into the [-1, 1] range.
+    """
+    def normalize(self, x):
+        return x / 32768
+
+    """
+    Unpack an audio input into the standard [-32767, 32767] range again.
+    """
+    def unpack(self, x):
+        return x * 32768
 
     """
     Perform an encode/decode step. Defined here separately from AutoEncoder.forward() in case the data needs to be 
