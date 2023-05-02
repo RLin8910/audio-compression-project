@@ -78,7 +78,8 @@ class ProblemBase(ABC):
         # load original
         orig = wave_helpers.import_to_array(in_path)
         # compress frames
-        orig['frames'] = self.encode(torch.from_numpy(orig['frames']))
+        # detach because we don't care about gradient if we aren't training
+        orig['frames'] = self.encode(torch.from_numpy(orig['frames'])).detach()
         # save
         with open(out_path, 'wb') as output:
             pickle.dump(orig, output)
@@ -91,7 +92,7 @@ class ProblemBase(ABC):
         with open(in_path, 'rb') as input:
             orig = pickle.load(input)
             frames = self.decode(orig['frames']).detach().numpy()
-
+            # export
             wave_helpers.export_to_file(frames, orig['framerate'], orig['channels'], orig['sampwidth'], out_path)
 
 
