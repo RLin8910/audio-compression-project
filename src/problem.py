@@ -9,13 +9,10 @@ import torch
 Parent class of all trainable autoencoder problems.
 """
 class ProblemBase(ABC):
-    def __init__(self, autoencoder, loss, optimizer, inp_size = 16_000, enc_size = 1_000):
+    def __init__(self, autoencoder, loss, optimizer):
         self.autoencoder = autoencoder
         self.loss = loss
         self.optimizer = optimizer
-
-        self.inp_size = inp_size
-        self.enc_size = enc_size
 
     """
     Saves the model to the folder at path `path`.
@@ -55,6 +52,7 @@ class ProblemBase(ABC):
         losses = []
         for epoch in range(epochs):
             for samp in data:       
+                samp = self.preprocess(samp)
                 # Output of Autoencoder
                 reconstructed = self.forward(samp)
                 
@@ -79,7 +77,7 @@ class ProblemBase(ABC):
         orig = wave_helpers.import_to_array(in_path)
         # compress frames
         # detach because we don't care about gradient if we aren't training
-        orig['frames'] = self.encode(torch.from_numpy(orig['frames'])).detach()
+        orig['frames'] = self.encode(self.preprocess(torch.from_numpy(orig['frames']))).detach()
         # save
         with open(out_path, 'wb') as output:
             pickle.dump(orig, output)
@@ -91,7 +89,7 @@ class ProblemBase(ABC):
         # load original
         with open(in_path, 'rb') as input:
             orig = pickle.load(input)
-            frames = self.decode(orig['frames']).detach().numpy()
+            frames = self.postprocess(self.decode(orig['frames'])).detach().numpy()
             # export
             wave_helpers.export_to_file(frames, orig['framerate'], orig['channels'], orig['sampwidth'], out_path)
 
@@ -107,6 +105,18 @@ class ProblemBase(ABC):
     """
     def unpack(self, x):
         return x * 32768
+
+    """
+    Preprocess data before encoding. Can be overwritten.
+    """
+    def preprocess(self, x):
+        return x
+    
+    """
+    Postprocess data after decoding for export - not used in calculating loss. Can be overwritten.
+    """
+    def postprocess(self, x):
+        return x
 
     """
     Perform an encode/decode step. Defined here separately from AutoEncoder.forward() in case the data needs to be 

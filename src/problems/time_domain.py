@@ -5,15 +5,15 @@ import utils
 import torch
 
 class TimeDomain(problem.ProblemBase):
-    def __init__(self):
+    def __init__(self, kernel_size = 400, stride = 2):
         encoder = torch.nn.Sequential(
-            torch.nn.Conv1d(1, 1, 400, 2),
-            torch.nn.Conv1d(1, 1, 400, 2)
+            torch.nn.Conv1d(1, 1, kernel_size, stride),
+            torch.nn.Conv1d(1, 1, kernel_size, stride),
         )
             
         decoder = torch.nn.Sequential(
-            torch.nn.ConvTranspose1d(1, 1, 400, 2),
-            torch.nn.ConvTranspose1d(1, 1, 400, 2),
+            torch.nn.ConvTranspose1d(1, 1, kernel_size, stride),
+            torch.nn.ConvTranspose1d(1, 1, kernel_size, stride),
         )
 
         model = autoencoder.AutoEncoder(encoder, decoder)
