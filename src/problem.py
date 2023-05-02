@@ -1,6 +1,8 @@
 from abc import ABC, abstractmethod
 import os
 import utils
+import wave_helpers
+import pickle
 import torch
 
 """
@@ -68,6 +70,30 @@ class ProblemBase(ABC):
                 losses.append(loss)
         
         return losses
+
+    """
+    Given an uncompressed input file, compress it and export it to the desired path.
+    """
+    def compress_and_export(self, in_path, out_path):
+        # load original
+        orig = wave_helpers.import_to_array(in_path)
+        # compress frames
+        orig['frames'] = self.encode(torch.from_numpy(orig['frames']))
+        # save
+        with open(out_path, 'wb') as output:
+            pickle.dump(orig, output)
+
+    """
+    Given a compressed file, decompress it and export it to the desired path
+    """
+    def decompress_and_export(self, in_path, out_path):
+        # load original
+        with open(in_path, 'rb') as input:
+            orig = pickle.load(input)
+            frames = self.decode(orig['frames']).detach().numpy()
+
+            wave_helpers.export_to_file(frames, orig['framerate'], orig['channels'], orig['sampwidth'], out_path)
+
 
     """
     Normalizes an audio input into the [-1, 1] range.
