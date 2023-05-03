@@ -9,6 +9,8 @@ import torch
 Parent class of all trainable autoencoder problems.
 """
 class ProblemBase(ABC):
+    save_shape = False
+
     def __init__(self, autoencoder, loss, optimizer):
         self.autoencoder = autoencoder
         self.loss = loss
@@ -58,6 +60,7 @@ class ProblemBase(ABC):
                 
                 # Calculate loss
                 loss = self.loss(reconstructed, samp)
+                print(float(loss))
                 
                 # Back propagate
                 self.optimizer.zero_grad()
@@ -75,9 +78,14 @@ class ProblemBase(ABC):
     def compress_and_export(self, in_path, out_path):
         # load original
         orig = wave_helpers.import_to_array(in_path)
+        frames = self.preprocess(orig['frames'])
+
+        # Allow saving original shape in case postprocessing needs it.
+        if self.save_shape:
+            orig['shape'] = frames.shape
         # compress frames
         # detach because we don't care about gradient if we aren't training
-        orig['frames'] = self.encode(self.preprocess(torch.from_numpy(orig['frames']))).detach()
+        orig['frames'] = self.encode(frames).detach()
         # save
         with open(out_path, 'wb') as output:
             pickle.dump(orig, output)
@@ -89,7 +97,10 @@ class ProblemBase(ABC):
         # load original
         with open(in_path, 'rb') as input:
             orig = pickle.load(input)
-            frames = self.postprocess(self.decode(orig['frames'])).detach().numpy()
+            shape = None
+            if self.save_shape:
+                shape = orig['shape']
+            frames = self.postprocess(self.decode(orig['frames']), shape).detach().numpy()
             # export
             wave_helpers.export_to_file(frames, orig['framerate'], orig['channels'], orig['sampwidth'], out_path)
 
@@ -115,7 +126,7 @@ class ProblemBase(ABC):
     """
     Postprocess data after decoding for export - not used in calculating loss. Can be overwritten.
     """
-    def postprocess(self, x):
+    def postprocess(self, x, shape = None):
         return x
 
     """

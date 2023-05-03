@@ -1,5 +1,6 @@
 import numpy
 import wave
+import torch
 
 """
 Open a wave file at the path `path` and return it as a dictionary containing
@@ -11,7 +12,7 @@ def import_to_array(path):
     frames = file.readframes(sample_count)
 
     audio_int = numpy.frombuffer(frames, dtype=numpy.int16)
-    audio_float = audio_int.astype(numpy.float32)
+    audio_float = torch.from_numpy(audio_int.astype(numpy.float32))
 
     result = {}
     result['framerate'] = file.getframerate()

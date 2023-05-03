@@ -14,4 +14,4 @@ def get_data(data_root):
     data_root = utils.path_slash(data_root)
 
     for filename in os.listdir(data_root):
-        yield torch.from_numpy(wave_helpers.import_to_array(data_root + filename)['frames'])
+        yield wave_helpers.import_to_array(data_root + filename)['frames']
