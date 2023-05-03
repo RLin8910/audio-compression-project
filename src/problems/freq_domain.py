@@ -33,7 +33,7 @@ class FreqDomain(problem.ProblemBase):
             return (0.5*(torch.abs(reconstructed_padded - target))**2).mean(dtype=torch.float64)
 
         optimizer = torch.optim.Adam(model.parameters(),
-                             lr = 1e-1,
+                             lr = 5e-3,
                              weight_decay = 1e-8)
         super().__init__(model, normalized_loss, optimizer)
 

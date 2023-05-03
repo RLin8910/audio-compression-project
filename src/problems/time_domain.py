@@ -26,7 +26,7 @@ class TimeDomain(problem.ProblemBase):
             mse_loss(utils.pad(self.normalize(reconstructed), len(target)), self.normalize(target))
 
         optimizer = torch.optim.Adam(model.parameters(),
-                             lr = 1e-4,
+                             lr = 5e-5,
                              weight_decay = 1e-8)
         super().__init__(model, normalized_loss, optimizer)
 
