@@ -1,6 +1,6 @@
 # audio-compression-project
 
-## Time Domain Autoencoder Example
+## Example Usage
 ### Compressing and Decompressing a File
 Navigate to the `src` folder, and run python from there. From there, run the following code:
 
@@ -8,10 +8,20 @@ Navigate to the `src` folder, and run python from there. From there, run the fol
 from problems.time_domain import TimeDomain
 prob = TimeDomain() # initialize the problem
 prob.load_model('../examples/models/time_domain') # load the previously-trained weights
-prob.compress_and_export('../examples/data/test.wav', '../examples/data/exp.pth') # compress the test file to 'exp.pth'
-prob.decompress_and_export('../examples/data/exp.pth', '../examples/data/test_exp.wav') # decompress the test file to 'test_exp.wav'
+prob.compress_and_export('../examples/samp/test.wav', '../examples/samp/exp.pth') # compress the test file to 'exp.pth'
+prob.decompress_and_export('../examples/samp/exp.pth', '../examples/samp/test_exp.wav') # decompress the test file to 'test_exp.wav'
 ```
 The compressed version of the original file can be found at `exp.pth`, while the reconstructed version can be found at `test_exp.wav`.
+
+For the frequency domain model:
+
+```
+from problems.freq_domain import FreqDomain
+prob = FreqDomain() # initialize the problem
+prob.load_model('../examples/models/freq_domain') # load the previously-trained weights
+prob.compress_and_export('../examples/samp/test.wav', '../examples/samp/exp.pth') # compress the test file to 'exp.pth'
+prob.decompress_and_export('../examples/samp/exp.pth', '../examples/samp/test_exp.wav') # decompress the test file to 'test_exp.wav'
+```
 
 ### Training the Model
 To train the model on data in a folder, run the following code with the model initialized:
