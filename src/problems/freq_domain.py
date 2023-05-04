@@ -42,6 +42,15 @@ class FreqDomain(problem.ProblemBase):
         
     def decode(self, x):
         return self.autoencoder.decoder(x).squeeze(0)
+        
+    def compress_tensor(self, x):
+        # break x into its real and imaginary parts and convert them to 16-bit
+        return torch.cat((x.real.to(torch.float16), x.imag.to(torch.float16)))
+
+    def decompress_tensor(self, x):
+        x_half = len(x) // 2
+        # recreate from real and imaginary parts
+        return torch.complex(x[:x_half], x[x_half:]).to(torch.cfloat)
 
     def preprocess(self, x):
         return torch.stft(self.normalize(x), self.n_fft, return_complex=True)

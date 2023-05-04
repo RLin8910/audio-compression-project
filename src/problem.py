@@ -85,7 +85,7 @@ class ProblemBase(ABC):
             orig['shape'] = frames.shape
         # compress frames
         # detach because we don't care about gradient if we aren't training
-        orig['frames'] = self.encode(frames).detach()
+        orig['frames'] = self.compress_tensor(self.encode(frames).detach())
         # save
         with open(out_path, 'wb') as output:
             pickle.dump(orig, output)
@@ -100,7 +100,8 @@ class ProblemBase(ABC):
             shape = None
             if self.save_shape:
                 shape = orig['shape']
-            frames = self.postprocess(self.decode(orig['frames']), shape).detach().numpy()
+            encoded_frames = self.decompress_tensor(orig['frames'])
+            frames = self.postprocess(self.decode(encoded_frames), shape).detach().numpy()
             # export
             wave_helpers.export_to_file(frames, orig['framerate'], orig['channels'], orig['sampwidth'], out_path)
 
@@ -128,6 +129,24 @@ class ProblemBase(ABC):
     """
     def postprocess(self, x, shape = None):
         return x
+
+    """
+    Process the tensor before writing to compressed file. 
+
+    Used primarily because computations are done using 32-bit numbers, but the original files use 16-bit numbers.
+    This prevents increased file sizes due to the change in bit count.
+    """
+    def compress_tensor(self, x):
+        return x.to(torch.float16)
+
+    """
+    Process the tensor after reading from compressed file. 
+
+    Used primarily because computations are done using 32-bit numbers, but the original files use 16-bit numbers.
+    This prevents increased file sizes due to the change in bit count.
+    """
+    def decompress_tensor(self, x):
+        return x.to(torch.float32)
 
     """
     Perform an encode/decode step. Defined here separately from AutoEncoder.forward() in case the data needs to be 
