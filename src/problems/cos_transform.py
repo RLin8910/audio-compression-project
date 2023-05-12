@@ -62,7 +62,7 @@ class CosTransform(problem.ProblemBase):
             loss_freq(target, utils.pad(reconstructed, len(target)), samprate, RITU)
 
         optimizer = torch.optim.Adam(model.parameters(),
-                             lr = 1e-2,
+                             lr = 1e-3,
                              weight_decay = 1e-8)
         super().__init__(model, normalized_loss, optimizer)
 
