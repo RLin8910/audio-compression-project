@@ -43,3 +43,12 @@ To load a model from path `path`:
 prob.load_model(path)
 ```
 In both cases, `path` should represent a folder, not a file path, because the autoencoder will be saved as a root folder containing 2 files: one for the encoder, and another for the decoder.
+
+### Fidelity Testing
+To test fidelity, the following can be run from the command line within the same folder as [fidelity_test.py](./src/fidelity_test.py):
+
+```
+python fidelity_test.py model metric data_src
+```
+
+Where `model` is either `time` or `freq` and corresponds to using either the time-domain or frequency-domain models, respectively, `metric` is either `time` or `freq` and corresponds to using either a normalized mean squared error fidelity across the time domain or the [ITU-R 468](https://en.wikipedia.org/wiki/ITU-R_468_noise_weighting) weighted frequency domain fidelity mean squared error, and `data_src` is the path to the root folder containing all .wav files for which the fidelity metric should be run on.
